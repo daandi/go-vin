@@ -3,8 +3,10 @@ package main
 import "strings"
 
 type VIN struct {
-	VIN          string
-	Manufacturer Manufacturer
+	VIN string
+	WMI string
+	VDS string
+	VIS string
 }
 
 type Manufacturer struct {
@@ -14,18 +16,20 @@ type Manufacturer struct {
 }
 
 func DecodeVIN(vin_str string) VIN {
-	noramlized_vin_str := strings.ToUpper(strings.TrimSpace(vin_str))
-	manunfacturer := decodeManufacturer(noramlized_vin_str)
+	normalizedVINStr := strings.ToUpper(strings.TrimSpace(vin_str))
+	wmi, vds, vis := SplitVIN(normalizedVINStr)
 
-	return VIN{VIN: noramlized_vin_str, Manufacturer: manunfacturer}
+	return VIN{VIN: normalizedVINStr, WMI: wmi, VDS: vds, VIS: vis}
 }
 
-func decodeManufacturer(vin string) Manufacturer {
-	wmc := extractWorldManufacturerCode(vin)
-
-	return Manufacturer{Name: "", Country: "", Code: wmc}
+func DecodeWMI(wmi string) Manufacturer {
+	return Manufacturer{Name: "", Country: "", Code: wmi}
 }
 
-func extractWorldManufacturerCode(vin string) string {
-	return vin[:3]
+/*SplitVIN splits a vin in wmi vds and vis*/
+func SplitVIN(vin string) (wmi, vds, vis string) {
+	wmi = vin[:3]
+	vds = vin[3:9]
+	vis = vin[9:17]
+	return
 }
