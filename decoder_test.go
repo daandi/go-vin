@@ -1,4 +1,4 @@
-package main
+package vingo
 
 import (
 	"testing"
@@ -9,8 +9,8 @@ func TestDecodeVIN(t *testing.T) {
 		in   string
 		want VIN
 	}{
-		{"5GZCZ43D13S812715", VIN{VIN: "5GZCZ43D13S812715", WMI: "5GZ", VDS: "CZ43D1", VIS: "3S812715"}},
-		{"    5gzcZ43d13S812715  ", VIN{"5GZCZ43D13S812715", "5GZ", "CZ43D1", "3S812715"}},
+		{"5GZCZ43D13S812715", VIN{"5GZCZ43D13S812715", vinData{"5GZ", "CZ43D1", "3S812715"}}},
+		{"    5gzcZ43d13S812715  ", VIN{"5GZCZ43D13S812715", vinData{"5GZ", "CZ43D1", "3S812715"}}},
 	}
 	for pos, c := range cases {
 		vin := DecodeVIN(c.in)
@@ -22,19 +22,17 @@ func TestDecodeVIN(t *testing.T) {
 
 func TestSplitVIN(t *testing.T) {
 	cases := []struct {
-		in  string
-		wmi string
-		vds string
-		vis string
+		vin     string
+		vinData vinData
 	}{
-		{"SB164ABN1PE082986", "SB1", "64ABN1", "PE082986"},
-		{"WVWZZZ1JZ3W386752", "WVW", "ZZZ1JZ", "3W386752"},
+		{"SB164ABN1PE082986", vinData{"SB1", "64ABN1", "PE082986"}},
+		{"WVWZZZ1JZ3W386752", vinData{"WVW", "ZZZ1JZ", "3W386752"}},
 	}
-	for pos, c := range cases {
-		wmi, vds, vis := SplitVIN(c.in)
-		if wmi != c.wmi || vds != c.vds || vis != c.vis {
-			t.Errorf("SplitVIN(%s), want %s %s %s but got %s %s %s at case %d",
-				c.in, c.wmi, c.vds, c.vis, wmi, vis, vds, pos)
+	for pos, want := range cases {
+		vinData := SplitVIN(want.vin)
+		if vinData != want.vinData {
+			t.Errorf("SplitVIN(%s), wanted: %v but got: %v case %d",
+				want.vin, want.vinData, vinData, pos)
 		}
 	}
 }

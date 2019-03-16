@@ -1,2 +1,1 @@
-# go-vin
-a VIN decoder written in Go
+# vingo is a VIN decoder written in Go
